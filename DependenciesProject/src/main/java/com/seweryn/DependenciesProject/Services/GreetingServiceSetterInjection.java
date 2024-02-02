@@ -2,11 +2,10 @@ package com.seweryn.DependenciesProject.Services;
 
 import org.springframework.stereotype.Service;
 
-@Service
-public class GreetingServiceImpl implements GreetingService {
-
+@Service("setterGreetingBean")
+public class GreetingServiceSetterInjection implements GreetingService {
     @Override
     public String sayGreeting() {
-        return "Hello! From Base Service implementation!";
+        return "Hello! Setting a Greeting!";
     }
 }
