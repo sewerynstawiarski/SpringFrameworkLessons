@@ -2,7 +2,9 @@ package com.seweryn.RestMvcProject.services;
 
 import com.seweryn.RestMvcProject.model.Customer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -53,5 +55,51 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> getCustomers() {
         return new ArrayList<>(customersMap.values());
+    }
+
+    @Override
+    public Customer addCustomer(Customer customer) {
+        Customer savedCustomer = Customer.builder()
+                .id(UUID.randomUUID())
+                .customerName(customer.getCustomerName())
+                .version(customer.getVersion())
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+
+        customersMap.put(savedCustomer.getId(), savedCustomer);
+        return savedCustomer;
+    }
+
+    @Override
+    public void updateById(UUID customerId, Customer customer) {
+        Customer existingCustomer = customersMap.get(customerId);
+
+        existingCustomer.setCustomerName(customer.getCustomerName());
+        existingCustomer.setLastModifiedDate(LocalDateTime.now());
+
+        customersMap.put(existingCustomer.getId(), existingCustomer); // this is not required here
+
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+
+        customersMap.remove(id);
+
+    }
+
+    @Override
+    public void updateCustomerPatchById(UUID customerId, Customer customer) {
+
+        Customer existingCustomer = customersMap.get(customerId);
+
+        if (StringUtils.hasText(customer.getCustomerName())) {
+            existingCustomer.setCustomerName(customer.getCustomerName());
+        }
+        if (customer.getVersion() != null) {
+            existingCustomer.setVersion(customer.getVersion());
+        }
+
     }
 }
