@@ -1,22 +1,22 @@
 package com.seweryn.RestMvcProject.services;
 
-import com.seweryn.RestMvcProject.model.Customer;
-import org.springframework.http.ResponseEntity;
+import com.seweryn.RestMvcProject.model.CustomerDTO;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerService {
 
-    Customer getCustomerById(UUID customerId);
+    Optional<CustomerDTO> getCustomerById(UUID customerId);
 
-    List<Customer> getCustomers();
+    List<CustomerDTO> getCustomers();
 
-    Customer addCustomer(Customer customer);
+    CustomerDTO addCustomer(CustomerDTO customer);
 
-    void updateById(UUID customerId, Customer customer);
+    void updateById(UUID customerId, CustomerDTO customer);
 
     void deleteById(UUID id);
 
-    void updateCustomerPatchById(UUID customerId, Customer customer);
+    void updateCustomerPatchById(UUID customerId, CustomerDTO customer);
 }
