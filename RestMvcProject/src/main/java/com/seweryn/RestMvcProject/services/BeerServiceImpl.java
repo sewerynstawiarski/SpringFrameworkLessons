@@ -14,7 +14,6 @@ import java.util.*;
 @Service
 public class BeerServiceImpl implements BeerService {
     private Map<UUID, BeerDTO> beerMap;
-
     public BeerServiceImpl() {
         this.beerMap = new HashMap<>();
 
@@ -54,11 +53,15 @@ public class BeerServiceImpl implements BeerService {
                 .updateDate(LocalDateTime.now())
                 .build();
         log.debug(beerMap.toString());
+
+
         beerMap.put(beer1.getId(), beer1);
         beerMap.put(beer2.getId(), beer2);
         beerMap.put(beer3.getId(), beer3);
 
-        log.debug("Beer map from constructor: " + beerMap.values());
+
+
+//        log.debug("Beer map from constructor: " + beerRepository.findAll());
 
     }
     @Override
@@ -93,7 +96,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void updateBeerById(UUID beerId, BeerDTO beer) {
+    public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
         BeerDTO existingBeer = beerMap.get(beerId);
         existingBeer.setBeerName(beer.getBeerName());
         existingBeer.setPrice(beer.getPrice());
@@ -101,7 +104,7 @@ public class BeerServiceImpl implements BeerService {
         existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
         existingBeer.setUpdateDate(LocalDateTime.now());
 
-        beerMap.put(existingBeer.getId(), existingBeer);
+       return Optional.of(existingBeer);
     }
 
     @Override
