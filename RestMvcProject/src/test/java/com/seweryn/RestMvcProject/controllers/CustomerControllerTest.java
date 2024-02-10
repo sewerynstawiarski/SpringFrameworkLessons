@@ -107,7 +107,7 @@ class CustomerControllerTest {
         testCustomer.setId(null); // because it should not be implemented in the json that we will create from object mapper
 
 
-        given(customerService.addCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.getCustomers().get(1)); // we want full custmoer object to be returned, witch id and version, that's why we use number 1 and not the one we've changed
+        given(customerService.saveCustomer(any(CustomerDTO.class))).willReturn(customerServiceImpl.getCustomers().get(1)); // we want full custmoer object to be returned, witch id and version, that's why we use number 1 and not the one we've changed
 
         mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
                 .accept(MediaType.APPLICATION_JSON)

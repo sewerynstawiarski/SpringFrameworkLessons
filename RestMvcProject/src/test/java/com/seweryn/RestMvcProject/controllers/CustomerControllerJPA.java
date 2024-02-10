@@ -1,11 +1,14 @@
 package com.seweryn.RestMvcProject.controllers;
 
 import com.seweryn.RestMvcProject.entities.Customer;
+import com.seweryn.RestMvcProject.model.BeerDTO;
 import com.seweryn.RestMvcProject.model.CustomerDTO;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,5 +56,23 @@ class CustomerControllerIT {
 
         assertThat(customerDTOS.size()).isEqualTo(0);
 
+    }
+    @Transactional
+    @Rollback
+    @Test
+    void testSaveNewCustomer() {
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerName("NEW CUSTOMER")
+                .build();
+
+        ResponseEntity responseEntity = customerController.addCustomer(customerDTO);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.valueOf(201));
+        assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
+
+        String[] location = responseEntity.getHeaders().getLocation().getPath().split("/");
+        UUID uuid = UUID.fromString(location[4]);
+
+        assertThat(customerRepository.findById(uuid).get()).isNotNull();
     }
 }

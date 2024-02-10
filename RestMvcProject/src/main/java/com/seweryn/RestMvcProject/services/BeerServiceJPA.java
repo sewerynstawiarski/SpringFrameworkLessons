@@ -6,7 +6,9 @@ import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,12 +54,35 @@ public class BeerServiceJPA implements BeerService {
     }
 
     @Override
-    public void deleteById(UUID beerId) {
-
+    public boolean deleteById(UUID beerId) {
+        if (beerRepository.existsById(beerId)) {
+            beerRepository.deleteById(beerId);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void patchBeerById(UUID beerId, BeerDTO beer) {
-
+    public boolean patchBeerById(UUID beerId, BeerDTO beer) {
+        if (beerRepository.existsById(beerId)) {
+            beerRepository.findById(beerId).ifPresent(foundeBeer -> {
+                if (StringUtils.hasText(beer.getBeerName())) {
+                    foundeBeer.setBeerName(beer.getBeerName());
+                }
+                if (beer.getBeerStyle() != null) {
+                    foundeBeer.setBeerStyle(beer.getBeerStyle());
+                }
+                if (beer.getUpc() !=  null) {
+                    foundeBeer.setUpc(beer.getUpc());
+                }
+                if (beer.getPrice() != null) {
+                    foundeBeer.setPrice(beer.getPrice());
+                }
+                foundeBeer.setUpdateDate(LocalDateTime.now());
+            });
+            return true;
+        }
+        return false;
     }
 }
+

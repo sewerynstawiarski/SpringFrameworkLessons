@@ -1,7 +1,6 @@
 package com.seweryn.RestMvcProject.services;
 
 import com.seweryn.RestMvcProject.Mappers.CustomerMapper;
-import com.seweryn.RestMvcProject.controllers.NotFoundException;
 import com.seweryn.RestMvcProject.model.CustomerDTO;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,8 @@ public class CustomerServiceJPA implements CustomerService {
     }
 
     @Override
-    public CustomerDTO addCustomer(CustomerDTO customer) {
-        return null;
+    public CustomerDTO saveCustomer(CustomerDTO customer) {
+        return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(customer)));
     }
 
     @Override

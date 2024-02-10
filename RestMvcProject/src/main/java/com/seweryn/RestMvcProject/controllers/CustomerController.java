@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -50,7 +51,7 @@ public class CustomerController {
     @PostMapping(CUSTOMER_PATH)
     public ResponseEntity addCustomer(@RequestBody CustomerDTO customer) {
 
-        CustomerDTO savedCustomer = customerService.addCustomer(customer);
+        CustomerDTO savedCustomer = customerService.saveCustomer(customer);
 
         HttpHeaders headers = new HttpHeaders();
 
