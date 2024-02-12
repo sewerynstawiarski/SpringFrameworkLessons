@@ -54,6 +54,8 @@ class CustomerControllerTest {
         Map<String, Object> customerMap = new HashMap<>();
         customerMap.put("customerName", "Changed Name");
 
+        given(customerService.updateCustomerPatchById(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.of(customerTest));
+
         mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, customerTest.getId())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,6 +73,8 @@ class CustomerControllerTest {
     void testCustomerDelete() throws Exception {
         CustomerDTO testCustomer =  customerServiceImpl.getCustomers().get(0);
 
+        given(customerService.deleteById(testCustomer.getId())).willReturn(true);
+
         mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -87,6 +91,8 @@ class CustomerControllerTest {
     void testCustomerUpdate() throws Exception {
         CustomerDTO customerTest = customerServiceImpl.getCustomers().get(0);
 
+        given(customerService.updateById(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.of(customerTest));
+
         mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, customerTest.getId())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -100,7 +106,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void testCreateNewBeer() throws Exception {
+    void testSaveNewCustomer() throws Exception {
         CustomerDTO testCustomer = customerServiceImpl.getCustomers().get(0);
 
         testCustomer.setVersion(null);

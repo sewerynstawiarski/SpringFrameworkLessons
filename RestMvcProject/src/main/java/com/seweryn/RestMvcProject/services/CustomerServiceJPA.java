@@ -6,10 +6,13 @@ import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+
 @Service
 @Primary
 @RequiredArgsConstructor
@@ -34,17 +37,51 @@ public class CustomerServiceJPA implements CustomerService {
     }
 
     @Override
-    public void updateById(UUID customerId, CustomerDTO customer) {
+    public Optional<CustomerDTO> updateById(UUID customerId, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
 
+        customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
+            foundCustomer.setCustomerName(customer.getCustomerName());
+            foundCustomer.setLastModifiedDate(customer.getLastModifiedDate());
+            atomicReference.set(Optional.of(customerMapper.customerToCustomerDto(foundCustomer)));
+
+        },
+                () -> {
+                    atomicReference.set(Optional.empty());
+                }
+
+        );
+        return atomicReference.get();
     }
 
     @Override
-    public void deleteById(UUID id) {
-
+    public boolean deleteById(UUID id) {
+        if (customerRepository.existsById(id)){
+            customerRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
-    public void updateCustomerPatchById(UUID customerId, CustomerDTO customer) {
+    public Optional<CustomerDTO> updateCustomerPatchById(UUID customerId, CustomerDTO customer) {
+        AtomicReference<Optional<CustomerDTO>> atomicReference = new AtomicReference<>();
 
+        customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
+            if (StringUtils.hasText(customer.getCustomerName())){
+                foundCustomer.setCustomerName(customer.getCustomerName());
+            }
+            if (customer.getLastModifiedDate() != null) {
+                foundCustomer.setLastModifiedDate(customer.getLastModifiedDate());
+            }
+                    atomicReference.set(Optional.of(customerMapper.customerToCustomerDto(foundCustomer)));
+
+                },
+                () -> {
+                    atomicReference.set(Optional.empty());
+                }
+        );
+        return atomicReference.get();
     }
 }
