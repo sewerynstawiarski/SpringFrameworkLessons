@@ -3,6 +3,7 @@ package com.seweryn.RestMvcProject.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seweryn.RestMvcProject.model.BeerDTO;
+import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.services.BeerService;
 import com.seweryn.RestMvcProject.services.BeerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -176,9 +178,28 @@ class BeerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.length()", is(6)))
                 .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    void testUpdateBeerByIdNullBeerName() throws Exception {
+
+        BeerDTO beerDTO = beerServiceImpl.listBeers().get(0);
+        BeerDTO beerDTOtest = BeerDTO.builder().build();
+
+        given(beerService.updateBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(beerServiceImpl.listBeers().get(1)));
+
+        MvcResult mvcResult = mockMvc.perform(put(BeerController.BEER_PATH_ID, beerDTO.getId()).accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerDTOtest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
+
     }
 }
