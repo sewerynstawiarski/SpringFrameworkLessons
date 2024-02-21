@@ -8,9 +8,6 @@ public class RestMvcProjectApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RestMvcProjectApplication.class, args);
-
-
-
 	}
 
 }

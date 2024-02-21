@@ -1,6 +1,7 @@
 package com.seweryn.RestMvcProject.controllers;
 
 import com.seweryn.RestMvcProject.model.BeerDTO;
+import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +68,10 @@ public class BeerController {
 
 //    @RequestMapping( value = BEER_PATH ,method = RequestMethod.GET)
     @GetMapping(BEER_PATH)
-    public List<BeerDTO> listBeers() {
-        return beerService.listBeers();
+    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+                                   @RequestParam(required = false) BeerStyle beerStyle,
+                                   @RequestParam(required = false) Boolean showInventory) {
+        return beerService.listBeers(beerName, beerStyle, showInventory);
     }
 //    @ExceptionHandler(NotFoundException.class)
 //    public ResponseEntity handleNotFoundException() {
