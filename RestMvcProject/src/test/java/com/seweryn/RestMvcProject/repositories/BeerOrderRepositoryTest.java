@@ -2,6 +2,7 @@ package com.seweryn.RestMvcProject.repositories;
 
 import com.seweryn.RestMvcProject.entities.Beer;
 import com.seweryn.RestMvcProject.entities.BeerOrder;
+import com.seweryn.RestMvcProject.entities.BeerOrderShipment;
 import com.seweryn.RestMvcProject.entities.Customer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,14 @@ class BeerOrderRepositoryTest {
         BeerOrder beerOrder = BeerOrder.builder()
                 .customerRef("Test order")
                 .customer(testCustomer)
+                .beerOrderShipment(BeerOrderShipment.builder()
+                        .trackingNumber("234567")
+                        .build())
                 .build();
 
         BeerOrder savedBeerOrder = beerOrderRepository.save(beerOrder);
 
         System.out.println(savedBeerOrder.getCustomerRef());
-
+// see BeerServiceJPA -> updateById() commented out area, if you use that it shows exception of the optimistic locking
     }
 }
