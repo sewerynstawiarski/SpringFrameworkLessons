@@ -36,7 +36,7 @@ public class BeerClientImpl implements BeerClient {
     public BeerDTO createBeer(BeerDTO newDto) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        ResponseEntity<BeerDTO> response = restTemplate.postForEntity(GET_BEER_PATH, newDto, BeerDTO.class);
+//        ResponseEntity<BeerDTO> response = restTemplate.postForEntity(GET_BEER_PATH, newDto, BeerDTO.class);
         URI uri = restTemplate.postForLocation(GET_BEER_PATH, newDto);
 
         return restTemplate.getForObject(uri.getPath(), BeerDTO.class);
@@ -74,9 +74,9 @@ public class BeerClientImpl implements BeerClient {
         if (showInventory != null) {
                 uriComponentsBuilder.queryParam("showInventory", showInventory);
         }
-        if (showInventory ==null) {
-            uriComponentsBuilder.queryParam("showInventory", false);
-        }
+//        if (showInventory == null) {
+//            uriComponentsBuilder.queryParam("showInventory", false);
+//        }
         if (pageNumber != null) {
             uriComponentsBuilder.queryParam("pageNumber", pageNumber);
         }
