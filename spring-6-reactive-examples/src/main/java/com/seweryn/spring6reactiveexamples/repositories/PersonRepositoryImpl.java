@@ -4,6 +4,10 @@ import com.seweryn.spring6reactiveexamples.domain.Person;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class PersonRepositoryImpl implements PersonRepository {
 
     Person michael = Person.builder()
@@ -27,8 +31,8 @@ public class PersonRepositoryImpl implements PersonRepository {
             .lastName("Porter")
             .build();
     @Override
-    public Mono<Person> getById(Integer id) {
-        return Mono.just(michael);
+    public Mono<Person> getById(final Integer id) {
+        return findAll().filter(person -> person.getId() == id).next();
     }
 
     @Override

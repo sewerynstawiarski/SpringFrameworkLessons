@@ -4,7 +4,9 @@ import com.seweryn.spring6reactiveexamples.domain.Person;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PersonRepositoryImplTest {
@@ -87,6 +89,78 @@ class PersonRepositoryImplTest {
         Mono<Person> fionaMono = personRepository.findAll()
                 .filter(person -> person.getFirstName().equals("Fiona")).next();
 
+
         fionaMono.subscribe(person -> System.out.println(person.getFirstName()));
+    }
+
+    @Test
+    void testFindPersonByIdNotFound() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        final Integer id = 8;
+
+        Mono<Person> personMono = personFlux.filter(person -> person.getId() == id).single()
+                .doOnError(throwable -> {
+                    System.out.println("Error occurred in Flux");
+                    System.out.println(throwable.toString());
+                });
+
+        personMono.subscribe(person -> {
+            System.out.println(person.toString());
+        }, throwable -> {
+            System.out.println("Error occurred in the Mono");
+            System.out.println(throwable.toString());
+        });
+    }
+
+    @Test
+    void testPersonById() {
+        Flux<Person> personFlux = personRepository.findAll();
+        final Integer id = 4;
+
+
+        Mono<Person> personMonoGood = personRepository.findAll().filter(person -> person.getId() == id).next();
+
+        Mono<Person> personMonoTest = personRepository.getById(id);
+
+        personMonoGood.subscribe(person -> {
+            System.out.println(person.getFirstName() + " " + person.getId());
+        });
+        personMonoTest.subscribe(person -> {
+            System.out.println(person.getFirstName() + " " + person.getId());
+        });
+    }
+
+    @Test
+    void testGetByIdFound() {
+        Mono<Person> personMonoTest = personRepository.getById(3);
+
+        assertTrue(personMonoTest.hasElement().block());
+    }
+    @Test
+    void testGetByIdNotFound() {
+        Mono<Person> personMonoTest = personRepository.getById(6);
+
+        assertFalse(personMonoTest.hasElement().block());
+    }
+    @Test
+    void testGetByIdFoundStepVerifier() {
+        Mono<Person> personMonoTest = personRepository.getById(3);
+
+        StepVerifier.create(personMonoTest).expectNextCount(1).verifyComplete();
+
+        personMonoTest.subscribe(person -> {
+            System.out.println(person.getFirstName());
+        });
+    }
+    @Test
+    void testGetByIdNotFoundStepVerifier() {
+        Mono<Person> personMonoTest = personRepository.getById(6);
+
+        StepVerifier.create(personMonoTest).expectNextCount(0).verifyComplete();
+
+        personMonoTest.subscribe(person -> {
+            System.out.println(person.getFirstName());
+        });
     }
 }
