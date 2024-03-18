@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-class BeerServiceImplTest {
+ public class BeerServiceImplTest {
     @Autowired
     BeerService beerService;
     @Autowired
