@@ -32,7 +32,7 @@ class BootStrapDataTest {
 
     @Test
     void run() throws Exception {
-        bootStrapData.run(null);
+        bootStrapData.run();
 
         assertThat(beerRepository.count()).isEqualTo(2413);
         assertThat(customerRepository.count()).isEqualTo(3);
