@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ResourceLoader;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,11 +24,13 @@ class BootStrapDataTest {
     CustomerRepository customerRepository;
     @Autowired
     BeerCsvService csvService;
+    @Autowired
+    ResourceLoader resourceLoader;
     BootStrapData bootStrapData;
 
     @BeforeEach
     void setUp() {
-        bootStrapData = new BootStrapData(beerRepository, customerRepository, csvService);
+        bootStrapData = new BootStrapData(beerRepository, customerRepository, csvService, resourceLoader);
     }
 
     @Test

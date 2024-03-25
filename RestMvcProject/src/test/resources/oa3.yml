@@ -546,9 +546,7 @@ components:
           type: integer
           format: int32
         sort:
-          type: array
-          items:
-            $ref: '#/components/schemas/SortObject'
+          $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         last:
@@ -567,9 +565,7 @@ components:
           type: integer
           format: int64
         sort:
-          type: array
-          items:
-            $ref: '#/components/schemas/SortObject'
+          $ref: '#/components/schemas/SortObject'
         pageSize:
           type: integer
           format: int32

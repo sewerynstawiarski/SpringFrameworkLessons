@@ -4,22 +4,17 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.seweryn.RestMvcProject.model.BeerCSVRecord;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 @Service
 public class BeerCsvServiceImpl implements BeerCsvService {
     @Override
-    public List<BeerCSVRecord> convertCSV(File csvFile) {
-        try {
-            List<BeerCSVRecord> beerCSVRecords = new CsvToBeanBuilder<BeerCSVRecord>(new FileReader(csvFile))
-                    .withType(BeerCSVRecord.class)
-                    .build()
-                    .parse();
-            return beerCSVRecords;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    public List<BeerCSVRecord> convertCSV(InputStream csvFile) {
+        List<BeerCSVRecord> beerCSVRecords = new CsvToBeanBuilder<BeerCSVRecord>(new InputStreamReader(csvFile, StandardCharsets.UTF_8))
+                .withType(BeerCSVRecord.class)
+                .build()
+                .parse();
+        return beerCSVRecords;
     }
 }
