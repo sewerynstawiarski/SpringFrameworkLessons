@@ -3,9 +3,7 @@ package springframework.spring_ai_intro.controllers;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import springframework.spring_ai_intro.model.Answer;
-import springframework.spring_ai_intro.model.GetCapitalRequest;
-import springframework.spring_ai_intro.model.Question;
+import springframework.spring_ai_intro.model.*;
 import springframework.spring_ai_intro.services.OpenAiService;
 
 @RestController
@@ -22,7 +20,11 @@ public class QuestionController {
         return openAiService.getAnswer(question);
     }
     @PostMapping("/capital")
-    public Answer getCapital(@RequestBody GetCapitalRequest getCapitalRequest) {
+    public GetCapitalResponse getCapital(@RequestBody GetCapitalRequest getCapitalRequest) {
         return openAiService.getCapital(getCapitalRequest);
+    }
+    @PostMapping("/capitalWithInfo")
+    public GetCapitalWithInfo getCapitalWithInfo(@RequestBody GetCapitalRequest getCapitalRequest) {
+        return openAiService.getCapitalWithInfo(getCapitalRequest);
     }
 }

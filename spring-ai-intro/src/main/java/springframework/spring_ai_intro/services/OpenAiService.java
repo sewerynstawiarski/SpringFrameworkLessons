@@ -1,12 +1,11 @@
 package springframework.spring_ai_intro.services;
 
-import springframework.spring_ai_intro.model.Answer;
-import springframework.spring_ai_intro.model.GetCapitalRequest;
-import springframework.spring_ai_intro.model.Question;
+import springframework.spring_ai_intro.model.*;
 
 public interface OpenAiService {
     String getAnswer(String question);
     Answer getAnswer(Question question);
 
-    Answer getCapital(GetCapitalRequest getCapitalRequest);
+    GetCapitalResponse getCapital(GetCapitalRequest getCapitalRequest);
+    GetCapitalWithInfo getCapitalWithInfo(GetCapitalRequest getCapitalRequest);
 }
