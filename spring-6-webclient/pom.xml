@@ -15,6 +15,7 @@
 	<description>Spring WebClient</description>
 	<properties>
 		<java.version>17</java.version>
+		<logbook.version>3.9.0</logbook.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -24,6 +25,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.zalando</groupId>
+			<artifactId>logbook-spring-webflux</artifactId>
+			<version>${logbook.version}</version>
 		</dependency>
 
 		<dependency>
