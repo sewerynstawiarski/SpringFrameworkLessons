@@ -1,0 +1,19 @@
+package com.seweryn.RestMvcProject.events;
+
+import com.seweryn.RestMvcProject.entities.Beer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.Authentication;
+
+import java.util.UUID;
+
+@Builder
+@AllArgsConstructor
+@Getter
+@Setter
+public class BeerDeletedEvent implements BeerEvent{
+   private Beer beer;
+   private Authentication authentication;
+}

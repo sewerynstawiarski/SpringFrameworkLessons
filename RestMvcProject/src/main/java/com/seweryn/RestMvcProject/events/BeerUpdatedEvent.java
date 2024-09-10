@@ -1,0 +1,17 @@
+package com.seweryn.RestMvcProject.events;
+
+import com.seweryn.RestMvcProject.entities.Beer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.Authentication;
+
+@Builder
+@AllArgsConstructor
+@Getter
+@Setter
+public class BeerUpdatedEvent implements BeerEvent{
+    private Beer beer;
+    Authentication authentication;
+}

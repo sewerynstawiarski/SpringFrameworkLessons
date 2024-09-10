@@ -4,10 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seweryn.RestMvcProject.Mappers.BeerMapper;
 import com.seweryn.RestMvcProject.entities.Beer;
+import com.seweryn.RestMvcProject.events.BeerCreatedEvent;
+import com.seweryn.RestMvcProject.events.BeerDeletedEvent;
+import com.seweryn.RestMvcProject.events.BeerPatchEvent;
+import com.seweryn.RestMvcProject.events.BeerUpdatedEvent;
 import com.seweryn.RestMvcProject.model.BeerDTO;
 import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
+import lombok.val;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +23,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
@@ -38,7 +47,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@RecordApplicationEvents
 class BeerControllerIT {
+    @Autowired
+    ApplicationEvents applicationEvents;
     @Autowired
     BeerController beerController;
     @Autowired
@@ -68,10 +80,84 @@ class BeerControllerIT {
     }
 
     @Test
+    void testCreateBeerMVC() throws Exception {
+        val beerDTO = BeerDTO.builder()
+                .beerName("Some New Beer")
+                .beerStyle(BeerStyle.IPA)
+                .upc("654321")
+                .price(BigDecimal.TEN)
+                .quantityOnHand(5)
+                .build();
+
+        mockMvc.perform(post(BeerController.BEER_PATH)
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Assertions.assertEquals(1, applicationEvents.stream(BeerCreatedEvent.class).count());
+    }
+
+    @Test
+    void testUpdateBeerMVC() throws Exception {
+        Beer beer = beerRepository.findAll().get(0);
+
+        BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
+
+        beerDTO.setBeerName("NEW NAME");
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beerDTO.getId())
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assertions.assertEquals(1, applicationEvents.stream(BeerUpdatedEvent.class).count());
+
+    }
+    @Test
+    void testPatchBeerMVC() throws Exception {
+        Beer beer = beerRepository.findAll().get(0);
+
+        BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
+
+        beerDTO.setBeerName("NEW NAME PATCH");
+
+        mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assertions.assertEquals(1, applicationEvents.stream(BeerPatchEvent.class).count());
+
+    }
+    @Test
+    void testDeleteBeerMVC() throws Exception {
+        Beer beer = beerRepository.findAll().get(0);
+
+        mockMvc.perform(delete(BeerController.BEER_PATH_ID, beer.getId())
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        Assertions.assertEquals(1, applicationEvents.stream(BeerDeletedEvent.class).count());
+
+    }
+
+    @Test
     void testListBeersByName() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .with(BeerControllerTest.jwtRequestPostProcessor)
-                .queryParam("beerName", "IPA")
+                        .queryParam("beerName", "IPA")
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(336)));
@@ -81,7 +167,7 @@ class BeerControllerIT {
     void testListBeersByStyle() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .with(BeerControllerTest.jwtRequestPostProcessor)
-                .queryParam("beerStyle", BeerStyle.IPA.toString())
+                        .queryParam("beerStyle", BeerStyle.IPA.toString())
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(547)));
@@ -92,14 +178,15 @@ class BeerControllerIT {
     void testListBeersByStyleAndNameShowInventoryFalse() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .with(BeerControllerTest.jwtRequestPostProcessor)
-                .queryParam("beerName", "IPA")
-                .queryParam("beerStyle", BeerStyle.IPA.name())
-                .queryParam("showInventory", "false")
-                .queryParam("pageSize", "800"))
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("showInventory", "false")
+                        .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(310)))
                 .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.nullValue()));
     }
+
     @Test
     void testListBeersByStyleAndNameShowInventoryTrue() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
@@ -112,6 +199,7 @@ class BeerControllerIT {
                 .andExpect(jsonPath("$.content.size()", is(310)))
                 .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
     }
+
     @Test
     void testListBeersByStyleAndNameShowInventoryTruePage2() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
@@ -130,8 +218,8 @@ class BeerControllerIT {
     void testListBeersByStyleAndName() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .with(BeerControllerTest.jwtRequestPostProcessor)
-                .queryParam("beerName", "IPA")
-                .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(310)));
@@ -145,13 +233,13 @@ class BeerControllerIT {
         beerMap.put("beerName", "7564758675645377564758675645377564758675645377564758675645377564758675645377564758675645377564758675645377564758675645377564758675645377564758675645");
         beerMap.put("upc", "9000");
         beerMap.put("beerStyle", BeerStyle.PALE_ALE);
-        MvcResult result =  mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+        MvcResult result = mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
                         .with(BeerControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()",is(1)))
+                .andExpect(jsonPath("$.length()", is(1)))
                 .andReturn();
 
         System.out.println(result.getResponse().getContentAsString());
@@ -180,6 +268,7 @@ class BeerControllerIT {
 
         assertThat(beerDTOS.getContent().size()).isEqualTo(1000);
     }
+
     @Rollback
     @Transactional
     @Test
@@ -189,6 +278,7 @@ class BeerControllerIT {
 
         assertThat(beerDTOS.size()).isEqualTo(0);
     }
+
     @Rollback
     @Transactional
     @Test
@@ -207,6 +297,7 @@ class BeerControllerIT {
         Beer beer = beerRepository.findById(savedUUID).get();
         assertThat(beer).isNotNull();
     }
+
     @Transactional
     @Rollback
     @Test
@@ -224,6 +315,7 @@ class BeerControllerIT {
 
         Beer updatedBeer = beerRepository.findById(beer.getId()).get();
         assertThat(updatedBeer.getBeerName()).isEqualTo(beerName);
+        Assertions.assertEquals(1, applicationEvents.stream(BeerUpdatedEvent.class).count());
 
     }
 
@@ -233,6 +325,7 @@ class BeerControllerIT {
             beerController.updateById(UUID.randomUUID(), BeerDTO.builder().build());
         });
     }
+
     @Transactional
     @Rollback
     @Test
@@ -243,6 +336,7 @@ class BeerControllerIT {
 
         assertThat(beerRepository.findById(beer.getId())).isEmpty();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.valueOf(204));
+        Assertions.assertEquals(1, applicationEvents.stream(BeerDeletedEvent.class).count());
 
 //        Beer foundBeer = beerRepository.findById(beer.getId()).get();
 //        assertThat(foundBeer).isNull();
@@ -254,10 +348,11 @@ class BeerControllerIT {
             beerController.deleteById(UUID.randomUUID());
         });
     }
+
     @Transactional
     @Rollback
     @Test
-    void testUpdatePatchById() {
+    void testPatchById() {
         Beer beer = beerRepository.findAll().get(0);
         BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
 
@@ -268,6 +363,7 @@ class BeerControllerIT {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.valueOf(204));
         assertThat(beerRepository.findById(beerDTO.getId()).get().getBeerName()).isEqualTo(beerName);
+        Assertions.assertEquals(1, applicationEvents.stream(BeerPatchEvent.class).count());
 
     }
 
@@ -288,9 +384,9 @@ class BeerControllerIT {
 
         MvcResult mvcResult = mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
                         .with(BeerControllerTest.jwtRequestPostProcessor)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(beerDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isNoContent())
                 .andReturn();
 

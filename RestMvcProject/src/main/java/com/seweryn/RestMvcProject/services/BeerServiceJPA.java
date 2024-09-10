@@ -2,19 +2,27 @@ package com.seweryn.RestMvcProject.services;
 
 import com.seweryn.RestMvcProject.Mappers.BeerMapper;
 import com.seweryn.RestMvcProject.entities.Beer;
+import com.seweryn.RestMvcProject.events.BeerCreatedEvent;
+import com.seweryn.RestMvcProject.events.BeerDeletedEvent;
+import com.seweryn.RestMvcProject.events.BeerPatchEvent;
+import com.seweryn.RestMvcProject.events.BeerUpdatedEvent;
 import com.seweryn.RestMvcProject.model.BeerDTO;
 import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +38,7 @@ public class BeerServiceJPA implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
     private final CacheManager cacheManager;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private static final int DEFAULT_PAGE = 0;
     private static final int DEFAULT_PAGE_SIZE = 25;
@@ -110,7 +119,13 @@ public class BeerServiceJPA implements BeerService {
         if (cacheManager.getCache("beerListCache") != null) {
             cacheManager.getCache("beerListCache").clear();
         }
-        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDTOToBeer(beer)));
+        val savedBeer = beerRepository.save(beerMapper.beerDTOToBeer(beer));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        applicationEventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, auth));
+
+        return beerMapper.beerToBeerDto(savedBeer);
     }
 
     @Override
@@ -128,7 +143,14 @@ public class BeerServiceJPA implements BeerService {
             foundedBeer.setUpc(beer.getUpc());
             foundedBeer.setPrice(beer.getPrice());
             foundedBeer.setVersion(beer.getVersion());
-            atomicReference.set(Optional.of(beerMapper.beerToBeerDto(beerRepository.save(foundedBeer))));
+
+            val savedBeer = beerRepository.save(foundedBeer);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            applicationEventPublisher.publishEvent(new BeerUpdatedEvent(savedBeer, authentication));
+
+            atomicReference.set(Optional.of(beerMapper.beerToBeerDto(savedBeer)));
 
         }, () -> {
             atomicReference.set(Optional.empty());
@@ -145,6 +167,11 @@ public class BeerServiceJPA implements BeerService {
 
         if (beerRepository.existsById(beerId)) {
             beerRepository.deleteById(beerId);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            applicationEventPublisher.publishEvent(new BeerDeletedEvent(Beer.builder().id(beerId).build(), authentication));
+
             return true;
         }
         return false;
@@ -167,20 +194,29 @@ public class BeerServiceJPA implements BeerService {
         clearCache(beerId);
 
         if (beerRepository.existsById(beerId)) {
-            beerRepository.findById(beerId).ifPresent(foundeBeer -> {
+            beerRepository.findById(beerId).ifPresent(foundedBeer -> {
                 if (StringUtils.hasText(beer.getBeerName())) {
-                    foundeBeer.setBeerName(beer.getBeerName());
+                    foundedBeer.setBeerName(beer.getBeerName());
                 }
                 if (beer.getBeerStyle() != null) {
-                    foundeBeer.setBeerStyle(beer.getBeerStyle());
+                    foundedBeer.setBeerStyle(beer.getBeerStyle());
                 }
                 if (beer.getUpc() !=  null) {
-                    foundeBeer.setUpc(beer.getUpc());
+                    foundedBeer.setUpc(beer.getUpc());
                 }
                 if (beer.getPrice() != null) {
-                    foundeBeer.setPrice(beer.getPrice());
+                    foundedBeer.setPrice(beer.getPrice());
                 }
-                foundeBeer.setUpdateDate(LocalDateTime.now());
+                if (beer.getQuantityOnHand() != null) {
+                    foundedBeer.setQuantityOnHand(beer.getQuantityOnHand());
+                }
+                foundedBeer.setUpdateDate(LocalDateTime.now());
+
+                val patchedBeer = beerRepository.save(foundedBeer);
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+                applicationEventPublisher.publishEvent(new BeerPatchEvent(patchedBeer, authentication));
             });
             return true;
         }
