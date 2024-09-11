@@ -1,5 +1,6 @@
 package com.seweryn.RestMvcProject.entities;
 
+import com.mysql.cj.protocol.ColumnDefinition;
 import com.seweryn.RestMvcProject.model.BeerStyle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -34,7 +35,7 @@ public class BeerAudit {
     @Size(max = 50)
     @Column(length = 50)
     private String beerName;
-
+    @Column(columnDefinition = "smallint")
     private BeerStyle beerStyle;
 
     @Size(max = 255)
