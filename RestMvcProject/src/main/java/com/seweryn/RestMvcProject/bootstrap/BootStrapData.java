@@ -1,11 +1,11 @@
 package com.seweryn.RestMvcProject.bootstrap;
 
-import com.seweryn.RestMvcProject.entities.Beer;
-import com.seweryn.RestMvcProject.entities.Customer;
+import com.seweryn.RestMvcProject.entities.*;
 import com.seweryn.RestMvcProject.model.BeerCSVRecord;
 import com.seweryn.RestMvcProject.model.BeerDTO;
 import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.model.CustomerDTO;
+import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import com.seweryn.RestMvcProject.services.BeerCsvService;
@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.flywaydb.core.internal.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -37,14 +38,15 @@ public class BootStrapData implements CommandLineRunner {
     private final CustomerRepository customerRepository;
     private final BeerCsvService beerCsvService;
     private final ResourceLoader resourceLoader;
+    private final BeerOrderRepository beerOrderRepository;
     @Transactional
     @Override
     public void run(String... args) throws Exception {
         loadBeerData();
         loadCsvData();
         loadCustomerData();
+        loadBeerOrderData();
     }
-
     private void loadCsvData() throws FileNotFoundException {
         if (beerRepository.count() < 10) {
 
@@ -80,7 +82,6 @@ public class BootStrapData implements CommandLineRunner {
         }
 
     }
-
     private void loadBeerData() {
         if (beerRepository.count() == 0) {
             Beer beer1 = Beer.builder()
@@ -118,7 +119,6 @@ public class BootStrapData implements CommandLineRunner {
             beerRepository.save(beer3);
         }
     }
-
     private void loadCustomerData() {
         if (customerRepository.count() == 0) {
             Customer customer1 = Customer.builder()
@@ -142,6 +142,54 @@ public class BootStrapData implements CommandLineRunner {
             customerRepository.save(customer1);
             customerRepository.save(customer2);
             customerRepository.save(customer3);
+        }
+    }
+    public void loadBeerOrderData() {
+        if (beerOrderRepository.count() == 0) {
+            Random random = new Random();
+            var customers = customerRepository.findAll();
+            var beers = beerRepository.findAll();
+
+            customers.forEach(customer -> {
+                Set<BeerOrder> beerOrders = new HashSet<>();
+                for (int i = 0; i <= 1; i++) {
+                    BeerOrderLine beerOrderLine1 = BeerOrderLine.builder()
+                            .beer(beers.get(random.nextInt(0, (beers.size() - 1))))
+                            .orderQuantity(random.nextInt(1, 10))
+                            .quantityAllocated(random.nextInt(10, 20))
+                            .createdDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .lastModifiedDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .build();
+                    BeerOrderLine beerOrderLine2 = BeerOrderLine.builder()
+                            .beer(beers.get(random.nextInt(0, (beers.size() - 1))))
+                            .orderQuantity(random.nextInt(1, 10))
+                            .quantityAllocated(random.nextInt(10, 20))
+                            .createdDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .lastModifiedDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .build();
+                    BeerOrderShipment beerOrderShipment = BeerOrderShipment.builder()
+                            .trackingNumber(Integer.toString(random.nextInt(1000, 99999)))
+                            .createdDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .lastModifiedDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .build();
+
+                    Set<BeerOrderLine> beerOrderLines = new HashSet<>();
+                    beerOrderLines.add(beerOrderLine1);
+                    beerOrderLines.add(beerOrderLine2);
+
+                    BeerOrder beerOrder = BeerOrder.builder()
+                            .customerRef(customer.getCustomerName())
+                            .customer(customer)
+                            .beerOrderShipment(beerOrderShipment)
+                            .beerOrderLines(beerOrderLines)
+                            .createdDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .lastModifiedDate(Timestamp.valueOf(LocalDateTime.now()))
+                            .build();
+                    beerOrders.add(beerOrder);
+                    beerOrderRepository.save(beerOrder);
+                }
+                customer.setBeerOrders(beerOrders);
+            });
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.seweryn.RestMvcProject.bootstrap;
 
 import com.seweryn.RestMvcProject.model.BeerCSVRecord;
+import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import com.seweryn.RestMvcProject.services.BeerCsvService;
@@ -23,6 +24,8 @@ class BootStrapDataTest {
     @Autowired
     CustomerRepository customerRepository;
     @Autowired
+    BeerOrderRepository beerOrderRepository;
+    @Autowired
     BeerCsvService csvService;
     @Autowired
     ResourceLoader resourceLoader;
@@ -30,7 +33,7 @@ class BootStrapDataTest {
 
     @BeforeEach
     void setUp() {
-        bootStrapData = new BootStrapData(beerRepository, customerRepository, csvService, resourceLoader);
+        bootStrapData = new BootStrapData(beerRepository, customerRepository, csvService, resourceLoader, beerOrderRepository);
     }
 
     @Test
@@ -39,5 +42,7 @@ class BootStrapDataTest {
 
         assertThat(beerRepository.count()).isEqualTo(2413);
         assertThat(customerRepository.count()).isEqualTo(3);
+        assertThat(beerOrderRepository.count()).isEqualTo(6);
+
     }
 }

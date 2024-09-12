@@ -30,7 +30,7 @@ public class BeerOrder {
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
         this.setCustomer(customer);
-        this.beerOrderLines = beerOrderLines;
+        this.setBeerOrderLines(beerOrderLines);
         this.setBeerOrderShipment(beerOrderShipment);
     }
 
@@ -57,20 +57,32 @@ public class BeerOrder {
     private String customerRef;
     @ManyToOne
     private Customer customer;
-    @OneToMany(mappedBy = "beerOrder")
+    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
     @Builder.Default
     private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-        customer.getBeerOrders().add(this);
-    }
 
     @OneToOne(cascade = CascadeType.PERSIST)
     private BeerOrderShipment beerOrderShipment;
 
     public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
-        this.beerOrderShipment = beerOrderShipment;
-        beerOrderShipment.setBeerOrder(this);
+        if (beerOrderShipment != null) {
+            this.beerOrderShipment = beerOrderShipment;
+            beerOrderShipment.setBeerOrder(this);
+        }
+
+    }
+    public void setCustomer(Customer customer) {
+        if (customer != null) {
+            this.customer = customer;
+            customer.getBeerOrders().add(this);
+        }
+
+    }
+    public void setBeerOrderLines (Set<BeerOrderLine> beerOrderLines) {
+        if (beerOrderLines != null) {
+            beerOrderLines.forEach(b -> b.setBeerOrder(this));
+            this.beerOrderLines = beerOrderLines;
+        }
+
     }
 }
