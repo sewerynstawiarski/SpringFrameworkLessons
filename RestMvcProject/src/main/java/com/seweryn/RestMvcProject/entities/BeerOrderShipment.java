@@ -24,6 +24,8 @@ public class BeerOrderShipment {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
+    @Version
+    private Long Version;
     @OneToOne
     private BeerOrder beerOrder;
     private String trackingNumber;
