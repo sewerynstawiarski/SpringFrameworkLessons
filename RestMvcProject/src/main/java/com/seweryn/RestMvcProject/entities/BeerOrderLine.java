@@ -1,6 +1,7 @@
 package com.seweryn.RestMvcProject.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -36,8 +37,8 @@ public class BeerOrderLine {
     private Timestamp lastModifiedDate;
 
     public boolean isNew() {return this.id == null;}
-
-    private Integer orderQuantity = 0;
+    @Min(value = 1 , message = "Order quantity must be over 0.")
+    private Integer orderQuantity = 1;
     private Integer quantityAllocated = 0;
     @ManyToOne
     private BeerOrder beerOrder;

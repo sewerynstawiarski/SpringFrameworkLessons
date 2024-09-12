@@ -1,6 +1,7 @@
 package com.seweryn.RestMvcProject.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -28,6 +29,7 @@ public class BeerOrderShipment {
     private Long version;
     @OneToOne
     private BeerOrder beerOrder;
+    @NotBlank
     private String trackingNumber;
     @CreationTimestamp
     @Column(updatable = false)
