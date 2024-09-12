@@ -12,7 +12,7 @@ public class BeerOrderLineDTO {
     private Long version;
     private Timestamp createdDate;
     private Timestamp lastModifiedDate;
-    private Integer orderQuantity = 0;
-    private Integer quantityAllocated = 0;
+    private Integer orderQuantity;
+    private Integer quantityAllocated;
     private BeerDTO beer;
 }

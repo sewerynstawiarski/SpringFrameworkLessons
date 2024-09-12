@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface BeerMapper {
     @Mapping(target = "categories", ignore = true)
     @Mapping(target = "beerOrderLines", ignore = true)
-    Beer beerDTOToBeer(BeerDTO beer);
+    Beer beerDTOToBeer(BeerDTO beerDTO);
     @Mapping(target = "categories", ignore = true)
     @Mapping(target = "beerOrderLines", ignore = true)
     BeerDTO beerToBeerDto(Beer beer);

@@ -9,7 +9,7 @@ import java.util.UUID;
 @Builder
 public class BeerOrderShipmentDTO {
     private UUID id;
-    private Long Version;
+    private Long version;
     private String trackingNumber;
     private Timestamp createdDate;
     private Timestamp lastModifiedDate;
