@@ -1,5 +1,6 @@
 package com.seweryn.RestMvcProject.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,5 +36,6 @@ public class Customer {
     private LocalDateTime lastModifiedDate;
     @Builder.Default
     @OneToMany(mappedBy = "customer")
+    @JsonManagedReference
     private Set<BeerOrder> beerOrders = new HashSet<>();
 }

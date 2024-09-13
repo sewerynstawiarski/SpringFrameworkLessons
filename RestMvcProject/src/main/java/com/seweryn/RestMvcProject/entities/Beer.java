@@ -1,5 +1,7 @@
 package com.seweryn.RestMvcProject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.repositories.CategoryRepository;
 import jakarta.persistence.*;
@@ -59,6 +61,7 @@ public class Beer {
     @UpdateTimestamp
     private LocalDateTime updateDate;
     @OneToMany(mappedBy = "beer")
+    @JsonBackReference
     private Set<BeerOrderLine> beerOrderLines;
     @ManyToMany
     @Builder.Default

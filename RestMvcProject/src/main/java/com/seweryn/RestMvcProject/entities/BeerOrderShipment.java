@@ -1,5 +1,6 @@
 package com.seweryn.RestMvcProject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -28,6 +29,7 @@ public class BeerOrderShipment {
     @Version
     private Long version;
     @OneToOne
+    @JsonBackReference
     private BeerOrder beerOrder;
     @NotBlank
     private String trackingNumber;

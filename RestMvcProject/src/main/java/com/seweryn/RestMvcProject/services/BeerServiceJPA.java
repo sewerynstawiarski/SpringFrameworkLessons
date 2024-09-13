@@ -72,7 +72,7 @@ public class BeerServiceJPA implements BeerService {
 //                .map(beerMapper::beerToBeerDto)
 //                .toList();
     }
-    public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+    public static PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
         int queryPageNumber;
         int queryPageSize;
 

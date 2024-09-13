@@ -1,5 +1,7 @@
 package com.seweryn.RestMvcProject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -41,7 +43,9 @@ public class BeerOrderLine {
     private Integer orderQuantity = 1;
     private Integer quantityAllocated = 0;
     @ManyToOne
+    @JsonBackReference
     private BeerOrder beerOrder;
     @ManyToOne
+    @JsonManagedReference
     private Beer beer;
 }

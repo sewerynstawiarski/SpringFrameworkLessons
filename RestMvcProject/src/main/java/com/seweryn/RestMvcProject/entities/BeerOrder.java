@@ -1,5 +1,7 @@
 package com.seweryn.RestMvcProject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -56,12 +58,15 @@ public class BeerOrder {
     }
     private String customerRef;
     @ManyToOne
+    @JsonBackReference
     private Customer customer;
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
     @Builder.Default
+    @JsonManagedReference
     private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     private BeerOrderShipment beerOrderShipment;
 
     public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
