@@ -30,6 +30,6 @@ public class BeerDTO {
     private BigDecimal price;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
-    private Set<Category> categories;
-    private Set<BeerOrderLine> beerOrderLines;
+//    private Set<Category> categories;
+//    private Set<BeerOrderLine> beerOrderLines;
 }

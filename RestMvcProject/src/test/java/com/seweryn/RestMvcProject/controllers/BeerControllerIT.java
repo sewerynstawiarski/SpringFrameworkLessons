@@ -10,6 +10,7 @@ import com.seweryn.RestMvcProject.events.BeerPatchEvent;
 import com.seweryn.RestMvcProject.events.BeerUpdatedEvent;
 import com.seweryn.RestMvcProject.model.BeerDTO;
 import com.seweryn.RestMvcProject.model.BeerStyle;
+import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import lombok.val;
 import org.hamcrest.core.IsNull;
@@ -61,6 +62,8 @@ class BeerControllerIT {
     WebApplicationContext wac;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    BeerOrderRepository beerOrderRepository;
 
     MockMvc mockMvc;
 
@@ -140,7 +143,12 @@ class BeerControllerIT {
     }
     @Test
     void testDeleteBeerMVC() throws Exception {
-        Beer beer = beerRepository.findAll().get(0);
+        Beer beer = beerRepository.save(Beer.builder()
+                        .beerName("TEST")
+                        .beerStyle(BeerStyle.IPA)
+                        .upc("654321")
+                        .price(BigDecimal.TEN)
+                .build());
 
         mockMvc.perform(delete(BeerController.BEER_PATH_ID, beer.getId())
                         .with(BeerControllerTest.jwtRequestPostProcessor)
@@ -273,6 +281,7 @@ class BeerControllerIT {
     @Transactional
     @Test
     void testEmptyList() {
+        beerOrderRepository.deleteAll();
         beerRepository.deleteAll();
         List<BeerDTO> beerDTOS = beerController.listBeers(null, null, false, 1, 25).getContent();
 

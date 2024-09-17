@@ -19,4 +19,5 @@ public interface BeerOrderService {
     BeerOrderDTO createBeerOrder(BeerOrderCreateDTO beerOrderCreateDTO);
     Optional<BeerOrderDTO> updateBeerOrder(UUID beerOrderId, BeerOrderUpdateDTO beerOrderUpdateDTO);
 
+    void deleteBeerOrderById(UUID beerOrderId);
 }

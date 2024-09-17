@@ -44,5 +44,9 @@ public class BeerOrderController {
     public ResponseEntity<BeerOrderDTO> updatedBeerOrder(@PathVariable("beerOrderId") UUID beerOrderId,@RequestBody BeerOrderUpdateDTO beerOrderUpdateDTO) {
         return ResponseEntity.ok(beerOrderService.updateBeerOrder(beerOrderId, beerOrderUpdateDTO).orElseThrow(NotFoundException::new));
     }
-
+    @DeleteMapping(BEER_ORDER_ID)
+    public ResponseEntity<Void> deleteBeeOrder(@PathVariable("beerOrderId")UUID beerOrderId) {
+        beerOrderService.deleteBeerOrderById(beerOrderId);
+        return ResponseEntity.noContent().build();
+    }
 }

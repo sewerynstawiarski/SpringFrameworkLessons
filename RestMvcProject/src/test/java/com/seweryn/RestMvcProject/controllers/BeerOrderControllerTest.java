@@ -131,9 +131,10 @@ class BeerOrderControllerTest {
                 .customerId(beerOrder.getCustomer().getId())
                 .customerRef("UPDATE")
                 .beerOrderShipmentUpdate(BeerOrderShipmentUpdateDTO.builder()
-                        .trackingNumber(beerOrder.getBeerOrderShipment().toString())
+                        .trackingNumber(beerOrder.getBeerOrderShipment().getTrackingNumber())
                         .build())
-                .beerOrderLinesUpdates(lines).build();
+                .beerOrderLinesUpdates(lines)
+                .build();
 
         mockMvc.perform(put(BeerOrderController.BEER_ORDER_ID, beerOrder.getId().toString())
                         .with(jwtRequestPostProcessor)
@@ -142,5 +143,20 @@ class BeerOrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerRef").value("UPDATE"));
 
+    }
+
+    @Test
+    void testDeleteBeerOrder() throws Exception {
+        var beerOrder = beerOrderRepository.findAll().getLast();
+
+        mockMvc.perform(delete(BeerOrderController.BEER_ORDER_ID, beerOrder.getId())
+                        .with(jwtRequestPostProcessor))
+                .andExpect(status().isNoContent());
+
+        assertTrue(beerOrderRepository.findById(beerOrder.getId()).isEmpty());
+
+        mockMvc.perform(delete(BeerController.BEER_PATH_ID, beerOrder.getId())
+                        .with(jwtRequestPostProcessor))
+                .andExpect(status().isNotFound());
     }
 }

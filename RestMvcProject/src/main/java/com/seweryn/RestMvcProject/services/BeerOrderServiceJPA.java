@@ -12,6 +12,7 @@ import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -70,25 +71,47 @@ public class BeerOrderServiceJPA implements BeerOrderService {
         beerOrder.setCustomerRef(beerOrderUpdateDTO.getCustomerRef());
         beerOrder.setCustomer(customerRepository.findById(beerOrderUpdateDTO.getCustomerId()).orElseThrow(NotFoundException::new));
 
-        beerOrder.setBeerOrderLines(beerOrderUpdateDTO.getBeerOrderLinesUpdates().stream().map(beerOrderLineUpdateDTO -> {
-            BeerOrderLine beerOrderLine = BeerOrderLine.builder()
-                    .beer(beerRepository.findById(beerOrderLineUpdateDTO.getBeerId()).orElseThrow(NotFoundException::new))
-                    .beerOrder(beerOrderRepository.findById(beerOrderLineUpdateDTO.getBeerOrderLineId()).orElseThrow(NotFoundException::new))
-                    .quantityAllocated(beerOrderLineUpdateDTO.getQuantityAllocated())
-                    .orderQuantity(beerOrderLineUpdateDTO.getOrderQuantity())
-                    .build();
-            return beerOrderLine;
-        }).collect(Collectors.toSet()));
 
-        if (beerOrderUpdateDTO.getBeerOrderShipmentUpdate() != null) {
-            beerOrder.setBeerOrderShipment(BeerOrderShipment.builder()
-                    .trackingNumber(beerOrderUpdateDTO.getBeerOrderShipmentUpdate().getTrackingNumber())
-                    .build());
+        beerOrderUpdateDTO.getBeerOrderLinesUpdates().forEach(beerOrderLineUpdateDTO -> {
+            if (beerOrderLineUpdateDTO.getBeerId() != null) {
+                val foundBeerOrderLine =  beerOrder.getBeerOrderLines().stream()
+                        .filter(beerOrderLine1 -> beerOrderLine1.getId().equals(beerOrderLineUpdateDTO.getBeerOrderLineId()))
+                        .findFirst().orElseThrow(NotFoundException::new);
+                foundBeerOrderLine.setBeer(beerRepository.findById(beerOrderLineUpdateDTO.getBeerId()).orElseThrow(NotFoundException::new));
+                foundBeerOrderLine.setOrderQuantity(beerOrderLineUpdateDTO.getOrderQuantity());
+                foundBeerOrderLine.setQuantityAllocated(beerOrderLineUpdateDTO.getQuantityAllocated());
+        }   else {
+                beerOrder.getBeerOrderLines().add(BeerOrderLine.builder()
+                        .beer(beerRepository.findById(beerOrderLineUpdateDTO.getBeerId()).orElseThrow(NotFoundException::new))
+                        .quantityAllocated(beerOrderLineUpdateDTO.getQuantityAllocated())
+                        .orderQuantity(beerOrderLineUpdateDTO.getOrderQuantity())
+                        .build());
+            }
+        });
+
+        if (beerOrderUpdateDTO.getBeerOrderShipmentUpdate() != null && beerOrderUpdateDTO.getBeerOrderShipmentUpdate().getTrackingNumber() != null) {
+            if (beerOrder.getBeerOrderShipment() == null) {
+                beerOrder.setBeerOrderShipment(BeerOrderShipment.builder()
+                        .trackingNumber(beerOrderUpdateDTO.getBeerOrderShipmentUpdate().getTrackingNumber())
+                        .build());
+            } else {
+                beerOrder.getBeerOrderShipment().setTrackingNumber(beerOrderUpdateDTO.getBeerOrderShipmentUpdate().getTrackingNumber());
+            }
+
         }
 
         var updatedBeerOrder = beerOrderRepository.save(beerOrder);
 
         return Optional.of(beerOrderMapper.beerOrderToBeerOrderDto(updatedBeerOrder));
+    }
+
+    @Override
+    public void deleteBeerOrderById(UUID beerOrderId) {
+        if (beerOrderRepository.findById(beerOrderId).isPresent()) {
+            beerOrderRepository.deleteById(beerOrderId);
+        } else {
+            throw new NotFoundException();
+        }
     }
 
 

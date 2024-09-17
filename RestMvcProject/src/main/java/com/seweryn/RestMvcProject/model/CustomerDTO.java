@@ -17,5 +17,4 @@ public class CustomerDTO {
     private Integer version;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private Set<BeerOrder> beerOrders;
 }

@@ -65,7 +65,7 @@ public class BeerOrder {
     @JsonManagedReference
     private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     @JsonManagedReference
     private BeerOrderShipment beerOrderShipment;
 

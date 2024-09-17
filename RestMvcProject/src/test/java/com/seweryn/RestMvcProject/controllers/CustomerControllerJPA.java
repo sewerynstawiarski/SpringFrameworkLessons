@@ -4,6 +4,7 @@ import com.seweryn.RestMvcProject.entities.Beer;
 import com.seweryn.RestMvcProject.entities.Customer;
 import com.seweryn.RestMvcProject.model.BeerDTO;
 import com.seweryn.RestMvcProject.model.CustomerDTO;
+import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,11 @@ class CustomerControllerIT {
     CustomerRepository customerRepository;
     @Autowired
     CustomerController customerController;
+    @Autowired
+    BeerOrderRepository beerOrderRepository;
 
     @Test
+    @Transactional
     void testGetCustomerById() {
         Customer customer = customerRepository.findAll().get(0);
 
@@ -44,6 +48,7 @@ class CustomerControllerIT {
     }
 
     @Test
+    @Transactional
     void testGetCustomers() {
         List<CustomerDTO> customerDTOS = customerController.getGustomersList();
 
@@ -53,6 +58,7 @@ class CustomerControllerIT {
     @Rollback
     @Test
     void testGetCustomersNull() {
+        beerOrderRepository.deleteAll();
         customerRepository.deleteAll();
         List<CustomerDTO> customerDTOS = customerController.getGustomersList();
 

@@ -11,8 +11,6 @@ public interface BeerMapper {
     @Mapping(target = "categories", ignore = true)
     @Mapping(target = "beerOrderLines", ignore = true)
     Beer beerDTOToBeer(BeerDTO beerDTO);
-    @Mapping(target = "categories", ignore = true)
-    @Mapping(target = "beerOrderLines", ignore = true)
     BeerDTO beerToBeerDto(Beer beer);
     @Mapping(target = "creationDateAudit", ignore = true)
     @Mapping(target = "auditId", ignore = true)
