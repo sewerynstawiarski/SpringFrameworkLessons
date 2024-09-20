@@ -158,6 +158,12 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<image>
+						<name>restmvcproject</name>
+					</image>
+					<docker>
+						<host>//./pipe/dockerDesktopLinuxEngine</host>
+					</docker>
 				</configuration>
 			</plugin>
 			<plugin>

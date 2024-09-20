@@ -20,7 +20,7 @@ public class CustomerRepositoryTest {
 
 
     @Test
-    void testListBeers() {
+    void testListCustomers() {
         var customers =  customerRepository.findAll().blockFirst();
 
         System.out.println(customers.getCustomerName());
