@@ -1,0 +1,55 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: restdb
+      MYSQL_USER: restadmin
+      MYSQL_PASSWORD: password
+    expose:
+      - "3306"
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    expose:
+      - "27017"
+  auth-server:
+    container_name: auth-server
+    image: auth-server:latest
+    expose:
+      - "9000"
+  rest-mvc:
+    container_name: rest-mvc
+    image: restmvcproject:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: localmysql
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/restdb
+      SERVER_PORT: 8080
+    expose:
+      - "8080"
+    depends_on:
+      - mysql
+  reactive:
+    container_name: reactive
+    image: spring-6-reactive:latest
+    environment:
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+      SERVER_PORT: 8080
+    expose:
+      - "8080"
+  reactive-mongo:
+    container_name: reactive-mongo
+    image: spring-6-reactive-mongo:latest
+    environment:
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+      SFG_MONGOHOST: mongo
+      SERVER_PORT: 8080
+    expose:
+      - "8080"
+    depends_on:
+      - mongo
