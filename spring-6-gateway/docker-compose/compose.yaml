@@ -53,3 +53,18 @@ services:
       - "8080"
     depends_on:
       - mongo
+  gateway:
+    container_name: gateway
+    image: spring-6-gateway:0.0.1-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+    expose:
+      - "8080"
+    ports:
+      - 8080:8080
+    depends_on:
+      - auth-server
+      - rest-mvc
+      - reactive
+      - reactive-mongo
