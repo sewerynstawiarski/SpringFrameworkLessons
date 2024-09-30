@@ -12,6 +12,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,13 +26,14 @@ import java.util.UUID;
 public class BeerOrder {
 
     public BeerOrder(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, String customerRef,
-                     Customer customer, Set<BeerOrderLine> beerOrderLines, BeerOrderShipment beerOrderShipment) {
+                     Customer customer, BigDecimal paymentAmount, Set<BeerOrderLine> beerOrderLines, BeerOrderShipment beerOrderShipment) {
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
         this.setCustomer(customer);
+        this.paymentAmount = paymentAmount;
         this.setBeerOrderLines(beerOrderLines);
         this.setBeerOrderShipment(beerOrderShipment);
     }
@@ -60,6 +62,7 @@ public class BeerOrder {
     @ManyToOne
     @JsonBackReference
     private Customer customer;
+    private BigDecimal paymentAmount;
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
     @Builder.Default
     @JsonManagedReference

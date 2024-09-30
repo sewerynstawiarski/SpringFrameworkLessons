@@ -1,7 +1,5 @@
-package com.seweryn.RestMvcProject.model;
+package com.seweryn.spring_6_restmvc_api.model;
 
-import com.seweryn.RestMvcProject.entities.BeerOrderLine;
-import com.seweryn.RestMvcProject.entities.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,8 +7,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 @Builder
 @Data

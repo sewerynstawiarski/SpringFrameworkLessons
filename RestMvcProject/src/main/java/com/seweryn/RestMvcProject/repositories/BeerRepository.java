@@ -1,7 +1,7 @@
 package com.seweryn.RestMvcProject.repositories;
 
 import com.seweryn.RestMvcProject.entities.Beer;
-import com.seweryn.RestMvcProject.model.BeerStyle;
+import com.seweryn.spring_6_restmvc_api.model.BeerStyle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;

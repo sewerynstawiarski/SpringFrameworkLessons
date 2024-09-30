@@ -1,7 +1,8 @@
 package com.seweryn.RestMvcProject.controllers;
 
-import com.seweryn.RestMvcProject.model.CustomerDTO;
+
 import com.seweryn.RestMvcProject.services.CustomerService;
+import com.seweryn.spring_6_restmvc_api.model.CustomerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

@@ -2,8 +2,8 @@ package com.seweryn.RestMvcProject.repositories;
 
 import com.seweryn.RestMvcProject.bootstrap.BootStrapData;
 import com.seweryn.RestMvcProject.entities.Beer;
-import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.services.BeerCsvServiceImpl;
+import com.seweryn.spring_6_restmvc_api.model.BeerStyle;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

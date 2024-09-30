@@ -11,6 +11,7 @@ import com.seweryn.RestMvcProject.model.*;
 import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
+import com.seweryn.spring_6_restmvc_api.model.*;
 import jdk.jfr.ContentType;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.seweryn.RestMvcProject.controllers.BeerControllerTest.jwtRequestPostProcessor;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 

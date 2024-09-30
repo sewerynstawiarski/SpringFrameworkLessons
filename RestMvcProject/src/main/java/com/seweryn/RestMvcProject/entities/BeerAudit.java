@@ -1,7 +1,6 @@
 package com.seweryn.RestMvcProject.entities;
 
-import com.mysql.cj.protocol.ColumnDefinition;
-import com.seweryn.RestMvcProject.model.BeerStyle;
+import com.seweryn.spring_6_restmvc_api.model.BeerStyle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;

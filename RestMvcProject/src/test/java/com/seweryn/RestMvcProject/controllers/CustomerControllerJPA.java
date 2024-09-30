@@ -2,10 +2,9 @@ package com.seweryn.RestMvcProject.controllers;
 
 import com.seweryn.RestMvcProject.entities.Beer;
 import com.seweryn.RestMvcProject.entities.Customer;
-import com.seweryn.RestMvcProject.model.BeerDTO;
-import com.seweryn.RestMvcProject.model.CustomerDTO;
 import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
+import com.seweryn.spring_6_restmvc_api.model.CustomerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

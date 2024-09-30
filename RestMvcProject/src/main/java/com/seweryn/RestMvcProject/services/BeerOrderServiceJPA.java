@@ -5,20 +5,21 @@ import com.seweryn.RestMvcProject.controllers.NotFoundException;
 import com.seweryn.RestMvcProject.entities.BeerOrder;
 import com.seweryn.RestMvcProject.entities.BeerOrderLine;
 import com.seweryn.RestMvcProject.entities.BeerOrderShipment;
-import com.seweryn.RestMvcProject.model.BeerOrderCreateDTO;
-import com.seweryn.RestMvcProject.model.BeerOrderDTO;
-import com.seweryn.RestMvcProject.model.BeerOrderUpdateDTO;
 import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
+import com.seweryn.spring_6_restmvc_api.events.OrderPlacedEvent;
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderCreateDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class BeerOrderServiceJPA implements BeerOrderService {
     private final BeerOrderMapper beerOrderMapper;
     private final BeerRepository beerRepository;
     private final CustomerRepository customerRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public Page<BeerOrderDTO> listBeerOrders(Integer pageSize, Integer pageNumber) {
@@ -100,9 +102,13 @@ public class BeerOrderServiceJPA implements BeerOrderService {
 
         }
 
-        var updatedBeerOrder = beerOrderRepository.save(beerOrder);
+        var updatedBeerOrderDTO = beerOrderMapper.beerOrderToBeerOrderDto(beerOrderRepository.save(beerOrder));
 
-        return Optional.of(beerOrderMapper.beerOrderToBeerOrderDto(updatedBeerOrder));
+        if (beerOrderUpdateDTO.getPaymentAmount() != null) {
+            applicationEventPublisher.publishEvent(OrderPlacedEvent.builder().beerOrderDTO(updatedBeerOrderDTO));
+        }
+
+        return Optional.of(updatedBeerOrderDTO);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.seweryn.RestMvcProject.services;
 
-import com.seweryn.RestMvcProject.model.BeerOrderCreateDTO;
-import com.seweryn.RestMvcProject.model.BeerOrderDTO;
-import com.seweryn.RestMvcProject.model.BeerOrderUpdateDTO;
+
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderCreateDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

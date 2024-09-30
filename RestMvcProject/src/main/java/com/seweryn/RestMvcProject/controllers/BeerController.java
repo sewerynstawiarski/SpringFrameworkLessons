@@ -1,8 +1,8 @@
 package com.seweryn.RestMvcProject.controllers;
 
-import com.seweryn.RestMvcProject.model.BeerDTO;
-import com.seweryn.RestMvcProject.model.BeerStyle;
 import com.seweryn.RestMvcProject.services.BeerService;
+import com.seweryn.spring_6_restmvc_api.model.BeerDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

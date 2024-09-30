@@ -2,7 +2,7 @@ package com.seweryn.RestMvcProject.Mappers;
 
 import com.seweryn.RestMvcProject.entities.Beer;
 import com.seweryn.RestMvcProject.entities.BeerAudit;
-import com.seweryn.RestMvcProject.model.BeerDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,12 +1,9 @@
-package com.seweryn.RestMvcProject.model;
+package com.seweryn.spring_6_restmvc_api.model;
 
-import com.seweryn.RestMvcProject.entities.BeerOrder;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 @Data
 @Builder

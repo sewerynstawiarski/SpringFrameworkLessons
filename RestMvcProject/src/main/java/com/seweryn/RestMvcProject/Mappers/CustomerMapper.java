@@ -1,7 +1,7 @@
 package com.seweryn.RestMvcProject.Mappers;
 
 import com.seweryn.RestMvcProject.entities.Customer;
-import com.seweryn.RestMvcProject.model.CustomerDTO;
+import com.seweryn.spring_6_restmvc_api.model.CustomerDTO;
 import org.mapstruct.Mapper;
 
 @Mapper

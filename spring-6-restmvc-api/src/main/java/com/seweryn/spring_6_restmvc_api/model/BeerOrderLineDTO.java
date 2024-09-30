@@ -1,4 +1,4 @@
-package com.seweryn.RestMvcProject.model;
+package com.seweryn.spring_6_restmvc_api.model;
 
 import jakarta.validation.constraints.Min;
 import lombok.Builder;

@@ -1,6 +1,7 @@
 package com.seweryn.RestMvcProject.services;
 
-import com.seweryn.RestMvcProject.model.CustomerDTO;
+
+import com.seweryn.spring_6_restmvc_api.model.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

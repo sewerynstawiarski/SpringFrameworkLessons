@@ -1,7 +1,7 @@
 package com.seweryn.RestMvcProject.Mappers;
 
 import com.seweryn.RestMvcProject.entities.BeerOrder;
-import com.seweryn.RestMvcProject.model.BeerOrderDTO;
+import com.seweryn.spring_6_restmvc_api.model.BeerOrderDTO;
 import org.mapstruct.Mapper;
 
 @Mapper

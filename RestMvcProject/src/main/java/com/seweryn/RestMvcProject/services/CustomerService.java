@@ -1,6 +1,7 @@
 package com.seweryn.RestMvcProject.services;
 
-import com.seweryn.RestMvcProject.model.CustomerDTO;
+
+import com.seweryn.spring_6_restmvc_api.model.CustomerDTO;
 
 import java.util.List;
 import java.util.Optional;

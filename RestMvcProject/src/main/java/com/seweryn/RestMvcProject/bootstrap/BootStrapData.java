@@ -2,24 +2,17 @@ package com.seweryn.RestMvcProject.bootstrap;
 
 import com.seweryn.RestMvcProject.entities.*;
 import com.seweryn.RestMvcProject.model.BeerCSVRecord;
-import com.seweryn.RestMvcProject.model.BeerDTO;
-import com.seweryn.RestMvcProject.model.BeerStyle;
-import com.seweryn.RestMvcProject.model.CustomerDTO;
 import com.seweryn.RestMvcProject.repositories.BeerOrderRepository;
 import com.seweryn.RestMvcProject.repositories.BeerRepository;
 import com.seweryn.RestMvcProject.repositories.CustomerRepository;
 import com.seweryn.RestMvcProject.services.BeerCsvService;
+import com.seweryn.spring_6_restmvc_api.model.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.flywaydb.core.internal.util.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileSystemUtils;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

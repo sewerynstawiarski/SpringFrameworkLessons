@@ -2,9 +2,9 @@ package com.seweryn.RestMvcProject.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seweryn.RestMvcProject.config.SpringSecConfig;
-import com.seweryn.RestMvcProject.model.CustomerDTO;
 import com.seweryn.RestMvcProject.services.CustomerService;
 import com.seweryn.RestMvcProject.services.CustomerServiceImpl;
+import com.seweryn.spring_6_restmvc_api.model.CustomerDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
